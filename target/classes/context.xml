@@ -2,13 +2,25 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
-	<context:component-scan base-package="edu.fa.dao"></context:component-scan>
-	<!-- quét đến package "...dao" ,tương đương <mapping class=""> trong Hibernate ??? 
-	=> khác vì ở đây load đến @Controller, còn hibernate load đến @Entity ? -->
+	<context:component-scan base-package="edu.fa.dao"></context:component-scan><!-- bài hibernate -->
+	<context:component-scan base-package="edu.fa.service" /> <!-- sẽ quét đến các class trong package service và có @Service -->
 	
+	<!-- Begin: phần lq Spring JPA 1 -->
+	<!-- Repositories có package chứa các class Mapping 1-1 với @Entity(package model),
+	 các class của Repositories thực hiện thao tác với CSDL như thêm, sửa , xóa,..
+	 nếu không dùng thẻ <jpa:repositories...> thì có thể k/báo trong thẻ <context:component-scan...> 
+	 và cần thêm @Repository ở trên tên class trong package "edu.fa.repository" được quét đến.
+	 Khi dùng thẻ  <jpa:repositories..> không cần k/báo @Repository ở trên tên class mà sd những
+	 interface mặc định của jpa repository, nó sẽ quét đến package chứa các class Repository -->
+	 <jpa:repositories base-package="edu.fa.repository" />
+	<!-- End: phần lq Spring JPA 1 -->
 	
 	<!-- Begin: Cấu hình DataSource -> hỗ trợ để tạo connection để nối DB: connection = dataSource.getConnection(); -->
 	<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -39,12 +51,28 @@
 				
 				<!-- lquan chỉnh sửa "schema"(table- hay namespace gom các table): Update->update schema(các table) sau khi đã tạo, 
 				create-> xóa tất cả schema(tất cả table) và tạo mới,... -->
-				<prop key="hibernate.hbm2ddl.auto">update</prop> 
+				<prop key="hibernate.hbm2ddl.auto">create</prop> 
 			</props>
 		</property>
 		<!-- End: K/báo chi tiết hơn các properties của SessionFactory liên quan: Driver, Dialect, ... -->
 	</bean>
 	<!-- End: Cấu hình SessionFactory để tạo Session, giống trong Hibernate là <session-factory>...</session-factory> -->
 	
+	<!-- Begin: phần lq Spring JPA 2 -->
+	<bean name="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" /><!--  Phần lq load URL, Driver để kết nối DB giống DataSource và JdbcTemplate -->
+		<property name="packagesToScan" value="edu.fa.model" /><!--  Trỏ đến package chứa các class model ánh xạ DB(có @Entity) -->
+		
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+			</bean>
+		</property>
+	</bean>
+	<bean name="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" /><!-- Trỏ đến entityManagerFactory đã cấu hình ở trên -->
+		
+	</bean>
 	
+	<tx:annotation-driven/> <!-- Bật các Annotation lq transaction -->
+	<!-- End: phần lq Spring JPA 2 -->
 </beans>
