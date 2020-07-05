@@ -9,15 +9,6 @@
 	<!-- quét đến package "...dao" ,tương đương <mapping class=""> trong Hibernate ??? 
 	=> khác vì ở đây load đến @Controller, còn hibernate load đến @Entity ? -->
 	
-	<!-- Begin: Trỏ DataSource"" của class đang kế thừa
-	 JdbcDaoSupport(để get ra luôn jdbcTemplate mà không cần tạo DataSource rồi JdbcTemplate như cách trước đó)
-	 đến DataSource -->
-	 <bean name="MyDaoSupport" class="edu.fa.dao.StudentJdbcDaoSupport">
-	 	<property name="dataSource" ref="dataSource" />
-	 </bean>
-	<!-- End: Trỏ DataSource"" của class đang kế thừa
-	 JdbcDaoSupport(để get ra luôn jdbcTemplate mà không cần tạo DataSource rồi JdbcTemplate như cách trước đó)
-	 đến DataSource -->
 	
 	<!-- Begin: Cấu hình DataSource -> hỗ trợ để tạo connection để nối DB: connection = dataSource.getConnection(); -->
 	<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -30,6 +21,30 @@
 		<property name="url" value="jdbc:derby://localhost:1527/education;create=true" />
 	</bean>
 	<!-- End: Cấu hình DataSource -> hỗ trợ để tạo connection để nối DB: connection = dataSource.getConnection(); -->
+	
+	<!-- Begin: Cấu hình SessionFactory để tạo Session, giống trong Hibernate là <session-factory>...</session-factory> -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- Trỏ đến "dataSource" để Hibernate load được phần cấu hình: URL và Driver để kết nối DB -->
+		<property name="dataSource" ref="dataSource" />
+		
+		<!-- "packagesToScan" giúp quét đến các class trong package model để tạo Object Java @Entity
+		 mapping với các table ở DB, khác "component-scan" là trỏ đến package chứa controller -->
+		<property name="packagesToScan" value="edu.fa.model" />
+		
+		<!-- Begin: K/báo chi tiết hơn các properties của SessionFactory liên quan: Driver, Dialect, ... -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DerbyDialect</prop><!--  Giúp HQL generate ra câu sql của loại DB khai báo(Derby) -->
+				<prop key="hibernate.show_sql">true</prop> <!-- Hiển thị lệnh sql trên màn hình console -->
+				
+				<!-- lquan chỉnh sửa "schema"(table- hay namespace gom các table): Update->update schema(các table) sau khi đã tạo, 
+				create-> xóa tất cả schema(tất cả table) và tạo mới,... -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop> 
+			</props>
+		</property>
+		<!-- End: K/báo chi tiết hơn các properties của SessionFactory liên quan: Driver, Dialect, ... -->
+	</bean>
+	<!-- End: Cấu hình SessionFactory để tạo Session, giống trong Hibernate là <session-factory>...</session-factory> -->
 	
 	
 </beans>

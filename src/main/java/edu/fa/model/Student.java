@@ -1,6 +1,15 @@
 package edu.fa.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity//Ánh xạ một table trong DB
 public class Student {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)//Tự động tăng
 	private int id;
 	private String name;
 	private String location;
