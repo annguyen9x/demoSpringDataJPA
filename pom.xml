@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>1.11.9.RELEASE</version>
+			<version>1.11.23.RELEASE</version>
 		</dependency>
 		<!-- Lưu ý: spring-data-jpa đã có spring-orm nhưng cần khai báo để đ/nghĩa 
 			version, tránh lỗi version không tương thích -->
