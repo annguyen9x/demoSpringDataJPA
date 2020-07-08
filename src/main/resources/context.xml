@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
-	<context:component-scan base-package="edu.fa.dao"></context:component-scan><!-- bài hibernate -->
+	<context:component-scan base-package="edu.fa.dao"></context:component-scan><!-- bài hibernate, "dao" tương đương repository trong Spring Data JPA -->
 	<context:component-scan base-package="edu.fa.service" /> <!-- sẽ quét đến các class trong package service và có @Service -->
 	
 	<!-- Begin: phần lq Spring JPA 1 -->
@@ -19,7 +19,7 @@
 	 và cần thêm @Repository ở trên tên class trong package "edu.fa.repository" được quét đến.
 	 Khi dùng thẻ  <jpa:repositories..> không cần k/báo @Repository ở trên tên class mà sd những
 	 interface mặc định của jpa repository, nó sẽ quét đến package chứa các class Repository -->
-	 <jpa:repositories base-package="edu.fa.repository" />
+	 <jpa:repositories base-package="edu.fa.repository" /> <!-- các class trong "repository" tương đương các class trong "dao" Hibernate -->
 	<!-- End: phần lq Spring JPA 1 -->
 	
 	<!-- Begin: Cấu hình DataSource -> hỗ trợ để tạo connection để nối DB: connection = dataSource.getConnection(); -->

@@ -1,5 +1,8 @@
 package edu.fa;
 
+
+import java.util.List;
+
 import javax.swing.Spring;
 import javax.xml.crypto.Data;
 
@@ -37,11 +40,29 @@ public class StudentManagementSpringDataJPA {
 		//Lấy ra một Bean 
 		StudentService studentService = applicationContext.getBean("studentService", StudentService.class);
 		
-		//Thêm một Student vào DB
+		//Thêm một Student vào DB->Dùng hàm có sẵn của JpaRepository
 		studentService.save(new Student("Clover", "HCM"));
 		
-		//Lấy ra tất cả Student trong Db
+		//Lấy ra tất cả Student trong Db->Dùng hàm có sẵn của JpaRepository
+		List<Student> studentsList = studentService.getAllStudent();
+		System.out.println("Danh sách Student: " + studentsList);
 		
+		//Đếm số Student trong DB->Dùng hàm có sẵn của JpaRepository
+		long numberOfStudent  = studentService.count();
+		System.out.println("Số Student: " + numberOfStudent);
+		
+		//Lấy ra tất cả Student có Name=name "và" Location = location->Dùng Query Method của JpaRepository
+		Student student2 = studentService.getStudentByNameAndLocation();
+		System.out.println("Student truy vấn theo Name 'và' Location: " + student2);
+		
+		//Lấy ra tất cả Student có Name=name "hoặc" Location = location->Dùng Query Method của JpaRepository
+		Student student3 = studentService.getStudentByNameOrLocation();
+		System.out.println("Student truy vấn theo Name 'hoặc' Location: " + student3);
+		
+		//Lấy ra tất cả Student theo name = name -> Dùng @Query 
+		List<Student> students = studentService.getAllStudentByNameABC("Clover");
+		System.out.println("@Query: Student truy vấn theo Name: " + students);
+
 	}
 
 }

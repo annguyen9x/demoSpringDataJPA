@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import edu.fa.model.Student;
 
+//Các class trong "dao " của Hibernate tương tự các class trong "repository" của Spring Data JPA, 
+//nhưng nó phải tự xd hàm vì không kế thừa interface "JpaRepository"
 
 @Component//Để spring hiểu đây là một Bean và load khi run app, @Component tương tự @Repository, @Server,..
 public class StudentHibernateDao {
